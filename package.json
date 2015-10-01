@@ -1,0 +1,17 @@
+{
+	"name": "wds-dynamic-dropdowns",
+	"title": "WDS Dynamic Dropdowns",
+	"version": "0.1.0",
+	"description": "Replace the user and parent post dropdown in WordPress with a dynamic version using the Select2 library",
+	"author": {
+		"name": "WebDevStudios",
+		"url": "http://webdevstudios.com"
+	},
+	"license": "GPLv2",
+	"devDependencies": {
+	    "grunt": "latest",
+	    "grunt-contrib-watch": "latest",
+	    "grunt-wp-i18n": "latest",
+	    "load-grunt-tasks": "latest"
+	}
+}
