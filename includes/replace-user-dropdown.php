@@ -52,7 +52,7 @@ class WDSDD_Replace_User_Dropdown {
 		);
 
 		// enqueue select 2
-		wp_enqueue_script( 'select2', $this->plugin->url . 'assets/js/select2-3.5.0/select2.min.js', array( 'jquery' ), '3.5.0', true) ;
+		wp_enqueue_script( 'select2', $this->plugin->url . 'assets/js/select2-3.5.0/select2.min.js', array( 'jquery' ), '3.5.0', true );
 		wp_enqueue_style( 'select2', $this->plugin->url . 'assets/js/select2-3.5.0/select2.css', array(), '3.5.0' );
 		wp_enqueue_script( 'wds-replace-user-dropdown', $this->plugin->url . 'assets/js/replace-user-dropdown.js', array( 'jquery', 'select2' ), self::VERSION, true );
 
