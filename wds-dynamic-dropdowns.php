@@ -144,7 +144,7 @@ class WDS_Dynamic_Dropdowns {
 	public function plugin_classes() {
 		// Attach other plugin classes to the base plugin class.
 		// $this->admin = new WDSDD_Admin( $this );
-		
+
 		$this->parent_dropdown = new WDSDD_Replace_Parent_Dropdown( $this );
 		$this->user_dropdown = new WDSDD_Replace_User_Dropdown( $this );
 	}
@@ -239,7 +239,7 @@ class WDS_Dynamic_Dropdowns {
 	public function requirements_not_met_notice() {
 		// Output our error
 		echo '<div id="message" class="error">';
-		echo '<p>' . sprintf( __( 'WDS Dynamic Dropdowns is missing requirements and has been <a href="%s">deactivated</a>. Please make sure all requirements are available.', 'wds-dynamic-dropdowns' ), admin_url( 'plugins.php' ) ) . '</p>';
+		echo '<p>' . esc_html( sprintf( __( 'WDS Dynamic Dropdowns is missing requirements and has been <a href="%s">deactivated</a>. Please make sure all requirements are available.', 'wds-dynamic-dropdowns' ), admin_url( 'plugins.php' ) ) ) . '</p>';
 		echo '</div>';
 	}
 
