@@ -97,14 +97,14 @@ class WDSDD_Replace_User_Dropdown {
 		}
 
 		$search = sanitize_text_field( $_GET['q'] );
-		
-		$user_query = new WP_User_Query( 
-			array( 
-				'search' => '*'.$search.'*', 
+
+		$user_query = new WP_User_Query(
+			array(
+				'search' => '*'.$search.'*',
 				'search_columns' => array( 'user_login', 'user_email', 'user_nicename', 'ID' ),
 				'who' => 'authors',
 				'number' => 10,
-			) 
+			)
 		);
 
 		// bail if we don't have any results
@@ -116,7 +116,7 @@ class WDSDD_Replace_User_Dropdown {
 		foreach ( $user_query->results as $user ) {
 			$results[] = array(
 				'id' => $user->ID,
-				'text' => $user->display_name
+				'text' => $user->display_name,
 			);
 		}
 
