@@ -1,19 +1,17 @@
 <?php
 class WDSDD_Replace_Parent_Dropdown {
-
 	/**
-	 * Plugin version, used for cache-busting of style and script file references.
+	 * Parent plugin class
 	 *
-	 * @since   1.0.0
-	 *
-	 * @var     string
+	 * @var WDS_Dynamic_Dropdowns
+	 * @since  0.1.0
 	 */
-	const VERSION = '1.0.0';
+	protected $plugin = null;
 
 	/**
 	 * Determine if we are loading the parent select dropdown
 	 *
-	 * @since    1.0.0
+	 * @since    0.1.0
 	 *
 	 * @var      bool
 	 */
@@ -22,8 +20,9 @@ class WDSDD_Replace_Parent_Dropdown {
 	/**
 	 * Constructor - add our hooks
 	 *
-	 * @since     1.0.0
+	 * @since     0.1.0
 	 *
+	 * @param WDS_Dynamic_Dropdowns $plugin Main plugin class
 	 * @return    null
 	 */
 	public function __construct( $plugin ) {
@@ -36,6 +35,10 @@ class WDSDD_Replace_Parent_Dropdown {
 
 	/**
 	 * Initiate hooks
+	 *
+	 * @since  0.1.0
+	 *
+	 * @return void
 	 */
 	public function hooks() {
 		add_filter( 'page_attributes_dropdown_pages_args', array( $this, 'dropdown_pages_pseudo_cpt' ) );
@@ -49,7 +52,7 @@ class WDSDD_Replace_Parent_Dropdown {
 	/**
 	 * Override the default parent dropdown with a fake post_type to short-circuit the query
 	 *
-	 * @since     1.0.0
+	 * @since     0.1.0
 	 *
 	 * @return    array    $dropdown_args	arguments to be used in get_posts call
 	 */
@@ -64,7 +67,7 @@ class WDSDD_Replace_Parent_Dropdown {
 	/**
 	 * Replace default Parent dropdown with our own
 	 *
-	 * @since     1.0.0
+	 * @since     0.1.0
 	 *
 	 * @return    string	 new HTML structure
 	 */
@@ -81,7 +84,7 @@ class WDSDD_Replace_Parent_Dropdown {
 	/**
 	 * Enqueue select2 scripts and styles and output the <input>
 	 *
-	 * @since     1.0.0
+	 * @since     0.1.0
 	 *
 	 * @return    string    HTML for the <input>
 	 */
@@ -100,14 +103,16 @@ class WDSDD_Replace_Parent_Dropdown {
 	/**
 	 * Enqueues Scripts and Styles and localize script data
 	 *
-	 * @since     1.0.0
+	 * @since     0.1.0
+	 * 
+	 * @return    void
 	 */
 	protected function enqueue_scripts_and_styles() {
 		global $post;
 
 		wp_enqueue_script( 'select2', $this->plugin->url . 'assets/js//select2-3.5.0/select2.min.js', array( 'jquery' ), '3.5.0', true );
 		wp_enqueue_style( 'select2', $this->plugin->url . 'assets/js/select2-3.5.0/select2.css', array(), '3.5.0' );
-		wp_enqueue_script( 'wds-replace-page-dropdown', $this->plugin->url . 'assets/js/replace-parent-dropdown.js', array( 'jquery', 'select2' ), self::VERSION, true );
+		wp_enqueue_script( 'wds-replace-page-dropdown', $this->plugin->url . 'assets/js/replace-parent-dropdown.js', array( 'jquery', 'select2' ), $this->plugin->version, true );
 
 		$parent = isset( $post->post_parent ) ? $post->post_parent : '';
 		$post_type_object = get_post_type_object( $post->post_type );
@@ -127,7 +132,7 @@ class WDSDD_Replace_Parent_Dropdown {
 	/**
 	 * Search for posts using post_title
 	 *
-	 * @since     1.0.0
+	 * @since     0.1.0
 	 *
 	 * @return    null    outputs a JSON string to be consumed by an AJAX call
 	 */
@@ -181,5 +186,4 @@ class WDSDD_Replace_Parent_Dropdown {
 
 		wp_send_json_success( $response );
 	}
-
 }
