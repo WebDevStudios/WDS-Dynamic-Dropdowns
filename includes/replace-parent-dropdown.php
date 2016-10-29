@@ -177,7 +177,7 @@ class WDSDD_Replace_Parent_Dropdown {
 
 		$response = array();
 
-		foreach ( $results as $result ) {
+		foreach ( (array) $results as $result ) {
 			$response[] = array(
 				'id'   => $result->ID,
 				'text' => $result->post_title,
