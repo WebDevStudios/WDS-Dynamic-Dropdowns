@@ -1,20 +1,19 @@
 <?php
 class WDSDD_Replace_User_Dropdown {
-
 	/**
-	 * Plugin version, used for cache-busting of style and script file references.
+	 * Parent plugin class
 	 *
-	 * @since   1.0.0
-	 *
-	 * @var     string
+	 * @var WDS_Dynamic_Dropdowns
+	 * @since  0.1.0
 	 */
-	const VERSION = '1.0.0';
+	protected $plugin = null;
 
 	/**
 	 * Constructor - add our hooks
 	 *
-	 * @since     1.0.0
+	 * @since     0.1.0
 	 *
+	 * @param WDS_Dynamic_Dropdowns $plugin Main plugin class
 	 * @return    null
 	 */
 	public function __construct( $plugin ) {
@@ -27,6 +26,10 @@ class WDSDD_Replace_User_Dropdown {
 
 	/**
 	 * Initiate hooks
+	 *
+	 * @since   0.1.0
+	 * 
+	 * @return  void
 	 */
 	public function hooks() {
 		add_action( 'wp_ajax_wds_replace_user_dropdown', array( $this, 'ajax_get_users' ) );
@@ -35,28 +38,22 @@ class WDSDD_Replace_User_Dropdown {
 		add_filter( 'wp_dropdown_users', array( $this, 'dropdown_users_callback' ) );
 	}
 
-
+	/**
+	 * Callback for wp_dropdown_users
+	 *
+	 * @since  0.1.0
+	 * 
+	 * @param  string $output Current markup for output
+	 * @return string         Modified markup for output
+	 */
 	public function dropdown_users_callback( $output ) {
 		global $post;
 
 		$author_id = isset( $post->post_author ) ? $post->post_author : null;
 		$author_data = get_userdata( $author_id );
 
-		$data = array(
-			'ajax_callback'	   => 'wds_replace_user_dropdown',
-			'post_author'      => $author_id,
-			'display_name'     => isset( $author_data->display_name ) ? $author_data->display_name : null,
-			'post_type'        => get_post_type(),
-			'nonce'            => wp_create_nonce( 'wds-replace-user-dd-nonce' ),
-			'placeholder_text' => __( 'Select an Author', 'wds-replace-user-dropdown' ),
-		);
-
-		// enqueue select 2
-		wp_enqueue_script( 'select2', $this->plugin->url . 'assets/js/select2-3.5.0/select2.min.js', array( 'jquery' ), '3.5.0', true );
-		wp_enqueue_style( 'select2', $this->plugin->url . 'assets/js/select2-3.5.0/select2.css', array(), '3.5.0' );
-		wp_enqueue_script( 'wds-replace-user-dropdown', $this->plugin->url . 'assets/js/replace-user-dropdown.js', array( 'jquery', 'select2' ), self::VERSION, true );
-
-		wp_localize_script( 'wds-replace-user-dropdown', 'wds_rud_config', $data );
+		// enqueue scripts/styles
+		$this->enqueue();
 
 		return '
 			<input type="text" name="post_author_override" id="wds-user-search" value="'. $author_id .'"/>
@@ -66,7 +63,7 @@ class WDSDD_Replace_User_Dropdown {
 	/**
 	 * Search for posts using post_title
 	 *
-	 * @since     1.0.0
+	 * @since     0.1.0
 	 *
 	 * @return    null    outputs a JSON string to be consumed by an AJAX call
 	 */
@@ -78,6 +75,7 @@ class WDSDD_Replace_User_Dropdown {
 			&& wp_verify_nonce( $_GET['nonce'],  'wds-replace-user-dd-nonce' )
 		);
 
+		// bail early if security checks don't pass
 		if ( ! $security_check_passes ) {
 			wp_send_json_error( $_GET );
 		}
@@ -96,8 +94,10 @@ class WDSDD_Replace_User_Dropdown {
 			wp_send_json_success( $results );
 		}
 
+		// sanitize search field
 		$search = sanitize_text_field( $_GET['q'] );
 
+		// execute the user query
 		$user_query = new WP_User_Query(
 			array(
 				'search' => '*'.$search.'*',
@@ -112,8 +112,10 @@ class WDSDD_Replace_User_Dropdown {
 			wp_send_json_error( $_GET );
 		}
 
+		// hold results for select2
 		$results  = array();
-		foreach ( $user_query->results as $user ) {
+
+		foreach ( (array) $user_query->results as $user ) {
 			$results[] = array(
 				'id' => $user->ID,
 				'text' => $user->display_name,
@@ -121,5 +123,30 @@ class WDSDD_Replace_User_Dropdown {
 		}
 
 		wp_send_json_success( $results );
+	}
+
+	/**
+	 * Enqueue scripts and styles
+	 *
+	 * @since  0.1.0
+	 * 
+	 * @return void
+	 */
+	protected function enqueue() {
+		$data = array(
+			'ajax_callback'	   => 'wds_replace_user_dropdown',
+			'post_author'      => $author_id,
+			'display_name'     => isset( $author_data->display_name ) ? $author_data->display_name : null,
+			'post_type'        => get_post_type(),
+			'nonce'            => wp_create_nonce( 'wds-replace-user-dd-nonce' ),
+			'placeholder_text' => __( 'Select an Author', 'wds-replace-user-dropdown' ),
+		);
+
+		// enqueue select 2
+		wp_enqueue_script( 'select2', $this->plugin->url . 'assets/js/select2-3.5.0/select2.min.js', array( 'jquery' ), '3.5.0', true );
+		wp_enqueue_style( 'select2', $this->plugin->url . 'assets/js/select2-3.5.0/select2.css', array(), '3.5.0' );
+		wp_enqueue_script( 'wds-replace-user-dropdown', $this->plugin->url . 'assets/js/replace-user-dropdown.js', array( 'jquery', 'select2' ), $this->plugin->version, true );
+
+		wp_localize_script( 'wds-replace-user-dropdown', 'wds_rud_config', $data );
 	}
 }
