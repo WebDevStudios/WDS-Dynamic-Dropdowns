@@ -123,12 +123,10 @@ class WDSDD_Replace_User_Dropdown {
 		 *
 		 * @param array The current query arguments.
 		 */
-		$args = apply_filters( 'wds_dynamic_overrides_user_query_args', $args );
+		$args = apply_filters( 'wp_dropdown_users_args', $args, array() );
 
 		// Execute the user query.
-		$user_query = new WP_User_Query(
-
-		);
+		$user_query = new WP_User_Query( $args );
 
 		// Bail if we don't have any results.
 		if ( is_wp_error( $user_query ) ) {
