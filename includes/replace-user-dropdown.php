@@ -94,25 +94,39 @@ class WDSDD_Replace_User_Dropdown {
 			wp_send_json_success( $results );
 		}
 
-		// sanitize search field
+		// Sanitize search field.
 		$search = sanitize_text_field( $_GET['q'] );
 
-		// execute the user query
-		$user_query = new WP_User_Query(
-			array(
-				'search' => '*'.$search.'*',
-				'search_columns' => array( 'user_login', 'user_email', 'user_nicename', 'ID' ),
-				'who' => 'authors',
-				'number' => 10,
-			)
+		// User query arguments.
+		$args = array(
+			'search' => '*' . $search . '*',
+			'search_columns' => array( 'user_login', 'user_email', 'user_nicename', 'ID' ),
+			'who' => 'authors',
+			'number' => 10,
 		);
 
-		// bail if we don't have any results
+		/**
+		 * Filter user query arguments.
+		 *
+		 * Modify user query arguments for the dynamic dropdown.
+		 *
+	 	 * @since  0.1.1
+		 *
+		 * @param array The current query arguments.
+		 */
+		$args = apply_filters( 'wds_dynamic_overrides_user_query_args', $args );
+
+		// Execute the user query.
+		$user_query = new WP_User_Query(
+
+		);
+
+		// Bail if we don't have any results.
 		if ( is_wp_error( $user_query ) ) {
 			wp_send_json_error( $_GET );
 		}
 
-		// hold results for select2
+		// Hold results for select2.
 		$results  = array();
 
 		foreach ( (array) $user_query->results as $user ) {
