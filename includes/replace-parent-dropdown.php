@@ -1,4 +1,13 @@
 <?php
+/**
+ * Replace the parent dropdown with a AJAX dropdown.
+ *
+ * @package WDS Dynamics Dropdowns
+ */
+
+/**
+ * Class to replace the parent dropdown.
+ */
 class WDSDD_Replace_Parent_Dropdown {
 	/**
 	 * Parent plugin class

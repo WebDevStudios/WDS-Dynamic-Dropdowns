@@ -3,13 +3,15 @@
  * Plugin Name: WDS Dynamic Dropdowns
  * Plugin URI:  http://webdevstudios.com
  * Description: Replace the user and parent post dropdown in WordPress with a dynamic version using the Select2 library
- * Version:     0.1.0
+ * Version:     0.1.1
  * Author:      WebDevStudios
  * Author URI:  http://webdevstudios.com
  * Donate link: http://webdevstudios.com
  * License:     GPLv2
  * Text Domain: wds-dynamic-dropdowns
  * Domain Path: /languages
+ *
+ * @package WDS Dynamic Dropdowns
  */
 
 /**
@@ -39,7 +41,8 @@
  * Autoloads files with classes when needed
  *
  * @since  0.1.0
- * @param  string $class_name Name of the class being requested
+ *
+ * @param  string $class_name Name of the class being requested.
  * @return  null
  */
 function wds_dynamic_dropdowns_autoload_classes( $class_name ) {
@@ -61,6 +64,7 @@ spl_autoload_register( 'wds_dynamic_dropdowns_autoload_classes' );
  * Main initiation class
  *
  * @since  0.1.0
+ *
  * @var  string $version  Plugin version
  * @var  string $basename Plugin basename
  * @var  string $url      Plugin URL
