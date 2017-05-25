@@ -31,14 +31,14 @@ class WDSDD_Replace_Parent_Dropdown {
 	 *
 	 * @since     0.1.0
 	 *
-	 * @param WDS_Dynamic_Dropdowns $plugin Main plugin class
+	 * @param WDS_Dynamic_Dropdowns $plugin Main plugin class.
 	 * @return    null
 	 */
 	public function __construct( $plugin ) {
-		// allow access to main plugin class
+		// Allow access to main plugin class.
 		$this->plugin = $plugin;
 
-		// initiate hooks
+		// Initiate hooks.
 		$this->hooks();
 	}
 
@@ -63,7 +63,8 @@ class WDSDD_Replace_Parent_Dropdown {
 	 *
 	 * @since     0.1.0
 	 *
-	 * @return    array    $dropdown_args	arguments to be used in get_posts call
+	 * @param  array $dropdown_args Arguments for the parent dropdown.
+	 * @return array    $dropdown_args	arguments to be used in get_posts call
 	 */
 	public function dropdown_pages_pseudo_cpt( $dropdown_args ) {
 		$this->is_parent_select_dropdown = true;
@@ -78,7 +79,8 @@ class WDSDD_Replace_Parent_Dropdown {
 	 *
 	 * @since     0.1.0
 	 *
-	 * @return    string	 new HTML structure
+	 * @param  string $output The original output for the dropdown.
+	 * @return string	 	  New HTML structure
 	 */
 	function replace_default_parent_dropdown( $output ) {
 		if ( $this->is_parent_select_dropdown ) {
@@ -100,12 +102,12 @@ class WDSDD_Replace_Parent_Dropdown {
 	public function get_replacement_output() {
 		global $post;
 
-		// enqueue select 2
+		// Enqueue select 2.
 		$this->enqueue_scripts_and_styles();
 
-		// Do search w/ Ajax and populate these fields dynamically when a person starts typing
+		// Do search w/ Ajax and populate these fields dynamically when a person starts typing.
 		return '
-			<input type="text" name="parent_id" id="wds-page-search" value="'. ( isset( $post->post_parent ) ? $post->post_parent : '' ) .'"/>
+			<input type="text" name="parent_id" id="wds-page-search" value="' . ( isset( $post->post_parent ) ? $post->post_parent : '' ) . '"/>
 		';
 	}
 
@@ -113,7 +115,7 @@ class WDSDD_Replace_Parent_Dropdown {
 	 * Enqueues Scripts and Styles and localize script data
 	 *
 	 * @since     0.1.0
-	 * 
+	 *
 	 * @return    void
 	 */
 	protected function enqueue_scripts_and_styles() {
@@ -132,7 +134,7 @@ class WDSDD_Replace_Parent_Dropdown {
 			'parent_title'     => $parent ? get_the_title( $parent ) : '',
 			'post_type'        => $post->post_type,
 			'nonce'            => wp_create_nonce( 'wds-replace-page-dd-nonce' ),
-			'placeholder_text' => sprintf( __( 'Select a Parent %s', 'wds-replace-page-dropdown' ), $post_type_object->labels->singular_name ),
+			'placeholder_text' => sprintf( esc_html__( 'Select a Parent %s', 'wds-replace-page-dropdown' ), $post_type_object->labels->singular_name ),
 		);
 
 		wp_localize_script( 'wds-replace-page-dropdown', 'wds_rpd_config', $data );
@@ -175,11 +177,12 @@ class WDSDD_Replace_Parent_Dropdown {
 		$query = $wpdb->prepare( $query, $search, $post_type );
 		$results = $wpdb->get_results( $query );
 
-		// sanity check
-		if ( is_wp_error( $results ) ) {
+		// Bail early if no results.
+		if ( empty( $results ) ) {
 			wp_send_json_error( $results->get_error_message() );
 		}
 
+		// Bail early if not an array.
 		if ( ! is_array( $results ) ) {
 			wp_send_json_error( $_GET );
 		}
