@@ -1,4 +1,13 @@
 <?php
+/**
+ * Replace the user dropdown with a AJAX dropdown.
+ *
+ * @package WDS Dynamics Dropdowns
+ */
+
+/**
+ * Class to replace the user dropdown.
+ */
 class WDSDD_Replace_User_Dropdown {
 	/**
 	 * Parent plugin class
@@ -13,14 +22,14 @@ class WDSDD_Replace_User_Dropdown {
 	 *
 	 * @since     0.1.0
 	 *
-	 * @param WDS_Dynamic_Dropdowns $plugin Main plugin class
+	 * @param WDS_Dynamic_Dropdowns $plugin Main plugin class.
 	 * @return    null
 	 */
 	public function __construct( $plugin ) {
-		// allow access to main plugin class
+		// Main plugin class.
 		$this->plugin = $plugin;
 
-		// initiate hooks
+		// Initiate hooks.
 		$this->hooks();
 	}
 
@@ -28,7 +37,7 @@ class WDSDD_Replace_User_Dropdown {
 	 * Initiate hooks
 	 *
 	 * @since   0.1.0
-	 * 
+	 *
 	 * @return  void
 	 */
 	public function hooks() {
@@ -42,9 +51,9 @@ class WDSDD_Replace_User_Dropdown {
 	 * Callback for wp_dropdown_users
 	 *
 	 * @since  0.1.0
-	 * 
-	 * @param  string $output Current markup for output
-	 * @return string         Modified markup for output
+	 *
+	 * @param  string $output Current markup for output.
+	 * @return string         Modified markup for output.
 	 */
 	public function dropdown_users_callback( $output ) {
 		global $post;
@@ -52,11 +61,11 @@ class WDSDD_Replace_User_Dropdown {
 		$author_id = isset( $post->post_author ) ? $post->post_author : null;
 		$author_data = get_userdata( $author_id );
 
-		// enqueue scripts/styles
+		// Enqueue scripts/styles.
 		$this->enqueue();
 
 		return '
-			<input type="text" name="post_author_override" id="wds-user-search" value="'. $author_id .'"/>
+			<input type="text" name="post_author_override" id="wds-user-search" value="' . $author_id . '"/>
 		';
 	}
 
@@ -65,7 +74,7 @@ class WDSDD_Replace_User_Dropdown {
 	 *
 	 * @since     0.1.0
 	 *
-	 * @return    null    outputs a JSON string to be consumed by an AJAX call
+	 * @return void
 	 */
 	public function ajax_get_users() {
 		$security_check_passes = (
@@ -75,13 +84,13 @@ class WDSDD_Replace_User_Dropdown {
 			&& wp_verify_nonce( $_GET['nonce'],  'wds-replace-user-dd-nonce' )
 		);
 
-		// bail early if security checks don't pass
+		// Bail early if security checks don't pass.
 		if ( ! $security_check_passes ) {
 			wp_send_json_error( $_GET );
 		}
 
-		// if we have an author id, get the display_name
-		if ( isset( $_GET['id'] ) && $_GET['id'] ) {
+		// If we have an author id, get the display_name.
+		if ( ! empty( $_GET['id'] ) ) {
 			$author_data = get_userdata( absint( $_GET['id'] ) );
 
 			$results = array(
@@ -143,7 +152,7 @@ class WDSDD_Replace_User_Dropdown {
 	 * Enqueue scripts and styles
 	 *
 	 * @since  0.1.0
-	 * 
+	 *
 	 * @return void
 	 */
 	protected function enqueue() {
@@ -156,7 +165,7 @@ class WDSDD_Replace_User_Dropdown {
 			'placeholder_text' => __( 'Select an Author', 'wds-replace-user-dropdown' ),
 		);
 
-		// enqueue select 2
+		// Enqueue select 2.
 		wp_enqueue_script( 'select2', $this->plugin->url . 'assets/js/select2-3.5.0/select2.min.js', array( 'jquery' ), '3.5.0', true );
 		wp_enqueue_style( 'select2', $this->plugin->url . 'assets/js/select2-3.5.0/select2.css', array(), '3.5.0' );
 		wp_enqueue_script( 'wds-replace-user-dropdown', $this->plugin->url . 'assets/js/replace-user-dropdown.js', array( 'jquery', 'select2' ), $this->plugin->version, true );
