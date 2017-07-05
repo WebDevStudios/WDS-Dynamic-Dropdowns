@@ -69,9 +69,6 @@ window.WDS_Replace_User_Dropdown = window.WDS_Replace_User_Dropdown || {};
 		var items=[];
 
 		$.each( ajax_data.data, function( i, item ) {
-			console.log( item );
-
-			
 			var new_item = {
 				'id' : item.id,
 				'text' : item.text

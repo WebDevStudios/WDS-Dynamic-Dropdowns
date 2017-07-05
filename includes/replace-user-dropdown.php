@@ -86,17 +86,22 @@ class WDSDD_Replace_User_Dropdown {
 
 		// Bail early if security checks don't pass.
 		if ( ! $security_check_passes ) {
-			wp_send_json_error( $_GET );
+			wp_send_json_error();
 		}
 
 		// If we have an author id, get the display_name.
 		if ( ! empty( $_GET['id'] ) ) {
 			$author_data = get_userdata( absint( $_GET['id'] ) );
 
+			// Bail early if user doesn't exist.
+			if ( ! ( $author_data instanceof WP_User ) ) {
+				wp_send_json_error();
+			}
+
 			$results = array(
 				array(
 					'id' => $author_data->ID,
-					'text' => $author_data->display_name,
+					'text' => $author_data->display_name . ' (' . $author_data->user_email . ')',
 				),
 			);
 
@@ -130,7 +135,7 @@ class WDSDD_Replace_User_Dropdown {
 
 		// Bail if we don't have any results.
 		if ( is_wp_error( $user_query ) ) {
-			wp_send_json_error( $_GET );
+			wp_send_json_error();
 		}
 
 		// Hold results for select2.
@@ -139,7 +144,7 @@ class WDSDD_Replace_User_Dropdown {
 		foreach ( (array) $user_query->results as $user ) {
 			$results[] = array(
 				'id' => $user->ID,
-				'text' => $user->display_name,
+				'text' => $user->display_name . ' (' . $user->user_email . ')',
 			);
 		}
 
@@ -156,11 +161,11 @@ class WDSDD_Replace_User_Dropdown {
 	protected function enqueue() {
 		$data = array(
 			'ajax_callback'	   => 'wds_replace_user_dropdown',
-			'post_author'      => $author_id,
-			'display_name'     => isset( $author_data->display_name ) ? $author_data->display_name : null,
+			'post_author'      => isset( $author_id ) ? $author_id : false,
+			'display_name'     => isset( $author_data->display_name ) ? $author_data->display_name . '( ' . $author_data->user_email . ')' : null,
 			'post_type'        => get_post_type(),
 			'nonce'            => wp_create_nonce( 'wds-replace-user-dd-nonce' ),
-			'placeholder_text' => __( 'Select an Author', 'wds-replace-user-dropdown' ),
+			'placeholder_text' => esc_html__( 'Select an Author', 'wds-replace-user-dropdown' ),
 		);
 
 		// Enqueue select 2.
